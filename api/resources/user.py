@@ -20,7 +20,7 @@ class UserResource(Resource):
         user.save()
         return user_schema.dump(user), 200
 
-    @auth.login_required
+    # @auth.login_required
     def delete(self, user_id):
         raise NotImplemented  # не реализовано!
 
