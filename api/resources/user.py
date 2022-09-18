@@ -6,7 +6,7 @@ from api.schemas.user import user_schema, users_schema
 class UserResource(Resource):
     def get(self, user_id):
         user = UserModel.query.get(user_id)
-        if user:
+        if user is None:
             abort(403, error=f"User with id={user_id} not found")
         return user_schema.dump(user), 200
 
