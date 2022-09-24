@@ -3,6 +3,7 @@ __pycache__/
 upload/
 tmp/
 *env/
+*env
 *.db
 *.pyc
 *.log
