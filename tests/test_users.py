@@ -1,50 +1,65 @@
 import pytest
-from api import db
-from app import app
-from config import Config
 from api.models.user import UserModel
+from tests.init_test import client, application, auth_headers
 
 
 @pytest.fixture()
-def application():
-    app.config.update({
-        'SQLALCHEMY_DATABASE_URI': Config.TEST_DATABASE
-    })
-    db.create_all()
-    yield app
-    db.drop_all()
-
-
-@pytest.fixture()
-def client(application):
-    return application.test_client()
-
-
-def test_user_get_by_id(client):
-    # Create new User
-    user_data = {"username": "testUser", "password": "1234"}
+def user():
+    user_data = {"username": "testuser", "password": "1234"}
     user = UserModel(**user_data)
     user.save()
+    return user
 
+
+def test_user_get_by_id(client, user):
     response = client.get('/users/1')
-    data = response.json
     assert response.status_code == 200
-    assert data["id"] == 1
-    assert data["username"] == user_data["username"]
+    assert response.json["username"] == user.username
 
 
-def test_user_not_found(client):
+def test_user_not_found(client, user):
     response = client.get('/users/2')
     assert response.status_code == 404
 
 
-def test_user_create(client):
-    user_data = {"username": "testUser", "password": "1234"}
-    response = client.post('/users', json=user_data)
+def test_user_creation(client):
+    user_data = {
+        "username": 'admin',
+        'password': 'admin'
+    }
+    response = client.post('/users',
+                           json=user_data,
+                           content_type='application/json')
     data = response.json
-    user = UserModel.query.get(1)
     assert response.status_code == 201
-    assert data["id"] == 1
-    assert data["username"] == user_data["username"]
-    assert user is not None
-    assert user.username == user_data["username"]
+    assert 'admin' in data.values()
+
+
+@pytest.mark.skip(reason="test not finished")
+def test_user_creation_already_exist(client, user):
+    """
+    Тест на создание пользователя с существующим именем
+    """
+    # 1. Используя фикстуру user - создаем пользователя с "username": "testuser"
+    # 2. Отправляем put запрос на создание пользователя с таким же username
+    user_data = {"username": "testuser", "password": "1234"}
+    response = client.post('/users', json=user_data, content_type='application/json')
+    # TODO: допишите тест и запустите его, убрав декоратор @pytest.mark.skip
+
+
+def test_user_edit(client, user, auth_headers):
+    user_edited_data = {
+        "username": "new_name"
+    }
+    response = client.put(f'/users/{user.id}',
+                          json=user_edited_data,
+                          headers=auth_headers)
+    data = response.json
+    assert response.status_code == 200
+    assert data["username"] == user_edited_data["username"]
+
+
+@pytest.mark.skip(reason="test not implemented")
+def test_user_delete(client, user, auth_headers):
+    pass
+    # TODO: реализуйте тест на удаление пользователя и запустите его, убрав декоратор @pytest.mark.skip
