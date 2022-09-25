@@ -24,7 +24,7 @@ def verify_password(username, password):
     user = UserModel.query.filter_by(username=username).first()
     if not user or not user.verify_password(password):
         return False
-    g.user = user
+    # g.user = user
     return user
 
 
