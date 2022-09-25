@@ -41,8 +41,11 @@ class NoteResource(Resource):
         """
         Пользователь может удалять ТОЛЬКО свои заметки
         """
-        raise NotImplemented("Метод не реализован")
-        return note_dict, 200
+        note = NoteModel.query.get(note_id)
+        if not note:
+            abort(404, error=f"Note with id={note_id} not found")
+        note.delete()
+        return "", 204
 
 
 class NotesListResource(Resource):

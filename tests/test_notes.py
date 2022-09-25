@@ -30,7 +30,7 @@ def user_admin():
 
 @pytest.fixture()
 def note_admin(user_admin):
-    note_data = {"author_id": user_admin.id, "text": "Quote for admin"}
+    note_data = {"author_id": user_admin.id, "text": "Note for admin"}
     note = NoteModel(**note_data)
     note.save()
     return note
@@ -75,7 +75,11 @@ def test_note_edit(client, note_admin, auth_headers):
     assert data["text"] == note_edit_data["text"]
 
 
-@pytest.mark.skip(reason="test not implemented")
-def test_note_delete(client, auth_headers):
-    pass
-    # TODO: реализуйте тест на удаление заметки и запустите его, убрав декоратор @pytest.mark.skip
+# @pytest.mark.skip(reason="test not implemented")
+def test_note_delete(client, note_admin, auth_headers):
+    response = client.delete(f"/notes/{note_admin.id}", headers=auth_headers)
+    note = NoteModel.query.get(note_admin.id)
+    assert response.status_code == 204
+    assert note is None
+
+
