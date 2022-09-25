@@ -7,7 +7,7 @@ class UserResource(Resource):
     def get(self, user_id):
         user = UserModel.query.get(user_id)
         if user is None:
-            abort(403, error=f"User with id={user_id} not found")
+            abort(404, error=f"User with id={user_id} not found")
         return user_schema.dump(user), 200
 
     @auth.login_required(role="admin")

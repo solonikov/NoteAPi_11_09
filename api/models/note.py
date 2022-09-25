@@ -8,6 +8,8 @@ class NoteModel(db.Model):
     text = db.Column(db.String(255), unique=False, nullable=False)
     private = db.Column(db.Boolean(), default=True, nullable=False)
 
+    # def __init__(self, author_id, text, private=True):
+
     def save(self):
         db.session.add(self)
         db.session.commit()
