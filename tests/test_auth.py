@@ -4,7 +4,6 @@ from api.models.note import NoteModel
 from tests.init_test import client, user_admin, application, auth_headers
 
 
-@pytest.mark.skip(reason="not work")
 def test_basic_auth(client, auth_headers, user_admin):
     response = client.get('/auth/token', headers=auth_headers)
     data = response.json

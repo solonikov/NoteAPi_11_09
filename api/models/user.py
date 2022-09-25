@@ -2,6 +2,8 @@ from api import db, Config, ma
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
+from itsdangerous import URLSafeSerializer
+from itsdangerous import BadSignature
 
 from sqlalchemy.exc import IntegrityError
 
@@ -28,8 +30,8 @@ class UserModel(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
-    def generate_auth_token(self, expiration=600):
-        s = Serializer(Config.SECRET_KEY, expires_in=expiration)
+    def generate_auth_token(self):
+        s = URLSafeSerializer(Config.SECRET_KEY)
         return s.dumps({'id': self.id})
 
     def save(self):
@@ -45,11 +47,9 @@ class UserModel(db.Model):
 
     @staticmethod
     def verify_auth_token(token):
-        s = Serializer(Config.SECRET_KEY)
+        s = URLSafeSerializer(Config.SECRET_KEY)
         try:
             data = s.loads(token)
-        except SignatureExpired:
-            return None  # valid token, but expired
         except BadSignature:
             return None  # invalid token
         user = UserModel.query.get(data['id'])
