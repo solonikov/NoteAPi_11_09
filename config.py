@@ -4,6 +4,7 @@ BASE_DIR = Path(__file__).parent
 
 
 class Config:
+    PATH_TO_FIXTURES = BASE_DIR / "fixtures"
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{BASE_DIR / 'main.db'}"
     TEST_DATABASE = f"sqlite:///:memory:"
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # Зачем эта настройка: https://flask-sqlalchemy-russian.readthedocs.io/ru/latest/config.html#id2
