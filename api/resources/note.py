@@ -1,10 +1,15 @@
 from api import auth, abort, Resource, reqparse
 from api.models.note import NoteModel
-from api.schemas.note import note_schema, notes_schema
+from api.schemas.note import NoteSchema, NoteCreateSchema
+from flask_apispec.views import MethodResource
+from flask_apispec import marshal_with, use_kwargs, doc
 
 
-class NoteResource(Resource):
+@doc(tags=['Notes'])
+class NoteResource(MethodResource):
     @auth.login_required
+    @doc(summary="Get note by id", security=[{"basicAuth": []}])
+    @marshal_with(NoteSchema)
     def get(self, note_id):
         """
         Пользователь может получить ТОЛЬКО свою заметку
@@ -13,9 +18,11 @@ class NoteResource(Resource):
         note = NoteModel.query.get(note_id)
         if not note:
             abort(404, error=f"Note with id={note_id} not found")
-        return note_schema.dump(note), 200
+        return note, 200
 
     @auth.login_required
+    @doc(summary="Edit note by id", security=[{"basicAuth": []}])
+    @marshal_with(NoteSchema)
     def put(self, note_id):
         """
         Пользователь может редактировать ТОЛЬКО свои заметки
@@ -35,8 +42,12 @@ class NoteResource(Resource):
         note.private = note_data.get("private") or note.private
 
         note.save()
-        return note_schema.dump(note), 200
+        return note, 200
 
+    @auth.login_required
+    @doc(description='Delete note by id', security=[{"basicAuth": []}])
+    @doc(responses={401: {"description": "Not authorization"}})
+    @doc(responses={404: {"description": "Not found"}})
     def delete(self, note_id):
         """
         Пользователь может удалять ТОЛЬКО свои заметки
@@ -48,12 +59,18 @@ class NoteResource(Resource):
         return "", 204
 
 
-class NotesListResource(Resource):
+@doc(tags=['Notes'])
+class NotesListResource(MethodResource):
+    @doc(summary="Get notes list", security=[{"basicAuth": []}])
+    @marshal_with(NoteSchema(many=True), code=200)
     def get(self):
         notes = NoteModel.query.all()
-        return notes_schema.dump(notes), 200
+        return notes, 200
 
     @auth.login_required
+    @doc(summary="Create note", security=[{"basicAuth": []}])
+    @marshal_with(NoteSchema, code=201)
+    @use_kwargs(NoteCreateSchema)
     def post(self):
         author = auth.current_user()
         parser = reqparse.RequestParser()
@@ -62,4 +79,4 @@ class NotesListResource(Resource):
         note_data = parser.parse_args()
         note = NoteModel(author_id=author.id, **note_data)
         note.save()
-        return note_schema.dump(note), 201
+        return note, 201
