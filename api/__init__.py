@@ -29,8 +29,8 @@ app.config.update({
 
         openapi_version='2.0.0'
     ),
-    'APISPEC_SWAGGER_URL': '/swagger',  # URI API Doc JSON
-    'APISPEC_SWAGGER_UI_URL': '/swagger-ui'  # URI UI of API Doc
+    'APISPEC_SWAGGER_URL': '/swagger/',  # URI API Doc JSON
+    'APISPEC_SWAGGER_UI_URL': '/swagger-ui/'  # URI UI of API Doc
 })
 
 api = Api(app)

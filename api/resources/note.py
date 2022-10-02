@@ -1,8 +1,10 @@
-from api import auth, abort, Resource, reqparse
+from api import auth, abort, Resource, reqparse, db
 from api.models.note import NoteModel
+from api.models.note import TagModel
 from api.schemas.note import NoteSchema, NoteCreateSchema
 from flask_apispec.views import MethodResource
 from flask_apispec import marshal_with, use_kwargs, doc
+from webargs import fields
 
 
 @doc(tags=['Notes'])
@@ -76,3 +78,20 @@ class NotesListResource(MethodResource):
         note = NoteModel(author_id=author.id, **kwargs)
         note.save()
         return note, 201
+
+
+@doc(tags=['Notes'])
+class NoteSetTagsResource(MethodResource):
+    @doc(summary="Set tags to Note")
+    @use_kwargs({"tags": fields.List(fields.Int())}, location=('json'))
+    @marshal_with(NoteSchema)
+    def put(self, note_id, **kwargs):
+        note = NoteModel.query.get(note_id)
+        if not note:
+            abort(404, error=f"note {note_id} not found")
+        # TODO: Получить все теги по id одним запросом!
+        for tag_id in kwargs["tags"]:
+            tag = TagModel.query.get(tag_id)
+            note.tags.append(tag)
+        db.session.commit()
+        return note, 200
