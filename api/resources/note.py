@@ -71,12 +71,8 @@ class NotesListResource(MethodResource):
     @doc(summary="Create note", security=[{"basicAuth": []}])
     @marshal_with(NoteSchema, code=201)
     @use_kwargs(NoteCreateSchema)
-    def post(self):
+    def post(self, **kwargs):
         author = auth.current_user()
-        parser = reqparse.RequestParser()
-        parser.add_argument("text", required=True)
-        parser.add_argument("private", type=bool, required=True)
-        note_data = parser.parse_args()
-        note = NoteModel(author_id=author.id, **note_data)
+        note = NoteModel(author_id=author.id, **kwargs)
         note.save()
         return note, 201
