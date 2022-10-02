@@ -1,0 +1,13 @@
+{
+  "model": "UserModel",
+  "data": [
+    {
+      "username": "FixtureUser-4",
+      "password": "1234"
+    },
+    {
+      "username": "FixtureUser-5",
+      "password": "1234"
+    }
+  ]
+}
