@@ -43,6 +43,9 @@ token_auth = HTTPTokenAuth('Bearer')
 auth = MultiAuth(basic_auth, token_auth)
 docs = FlaskApiSpec(app)
 
+with app.app_context():
+    from commands import *
+
 
 # swagger = Swagger(app)
 
