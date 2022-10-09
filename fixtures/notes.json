@@ -2,9 +2,49 @@
   "model": "NoteModel",
   "data": [
     {
-      "text": "Note for User id=2 ",
-      "author_id": 2,
+      "text": "Note-1 for admin",
+      "author_id": 1,
       "private": true
+    },
+    {
+      "text": "Note-2 for admin",
+      "author_id": 1,
+      "private": true
+    },
+    {
+      "text": "Note-3 for admin",
+      "author_id": 1,
+      "private": true
+    },
+    {
+      "text": "Note-1 for Ivan",
+      "author_id": 2,
+      "private": false
+    },
+    {
+      "text": "Note-2 for Ivan",
+      "author_id": 1,
+      "private": false
+    },
+    {
+      "text": "Note-1 for Petr",
+      "author_id": 3,
+      "private": true
+    },
+    {
+      "text": "Note-2 for Petr",
+      "author_id": 3,
+      "private": true
+    },
+    {
+      "text": "Note-3 for Petr",
+      "author_id": 3,
+      "private": false
+    },
+    {
+      "text": "Note-4 for Petr",
+      "author_id": 3,
+      "private": false
     }
   ]
 }

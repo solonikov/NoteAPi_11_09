@@ -2,11 +2,16 @@
   "model": "UserModel",
   "data": [
     {
-      "username": "FixtureUser-4",
+      "username": "admin",
+      "password": "admin",
+      "role": "admin"
+    },
+    {
+      "username": "Ivan",
       "password": "1234"
     },
     {
-      "username": "FixtureUser-5",
+      "username": "Petr",
       "password": "1234"
     }
   ]
