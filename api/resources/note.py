@@ -63,10 +63,12 @@ class NoteResource(MethodResource):
 
 @doc(tags=['Notes'])
 class NotesListResource(MethodResource):
+    @auth.login_required
     @doc(summary="Get notes list", security=[{"basicAuth": []}])
     @marshal_with(NoteSchema(many=True), code=200)
     def get(self):
-        notes = NoteModel.query.all()
+        author = auth.current_user()
+        notes = NoteModel.query.join(NoteModel.author).filter_by(username=author.username).all()
         return notes, 200
 
     @auth.login_required
