@@ -95,3 +95,14 @@ class NoteSetTagsResource(MethodResource):
             note.tags.append(tag)
         db.session.commit()
         return note, 200
+
+
+@doc(tags=['Notes'])
+class NotesFilterResource(MethodResource):
+    # GET: /notes/filter?tag_name="..."
+    @doc(summary="Get notes with filters")
+    @marshal_with(NoteSchema(many=True))
+    @use_kwargs({"tag_name": fields.Str()}, location="query")
+    def get(self, **kwargs):
+        notes = NoteModel.query.join(NoteModel.tags).filter_by(name=kwargs["tag_name"]).all()
+        return notes
